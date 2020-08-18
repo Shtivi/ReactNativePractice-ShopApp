@@ -13,9 +13,9 @@ export const signup = (email, password) => async dispatch => {
       returnSecureToken: true
     })
   })
+  const responseData = await response.json()
 
   if (!response.ok) {
-    const responseData = await response.json()
     const errorId = responseData.error.message
     if (errorId === 'EMAIL_EXISTS') {
       throw new Error('email already exists')
@@ -24,7 +24,11 @@ export const signup = (email, password) => async dispatch => {
     }
   }
 
-  dispatch({ type: SIGNUP })
+  dispatch({
+    type: SIGNUP,
+    token: responseData.idToken,
+    userId: responseData.tokenId
+  })
 }
 
 export const login = (email, password) => async dispatch => {
@@ -39,9 +43,9 @@ export const login = (email, password) => async dispatch => {
       returnSecureToken: true
     })
   })
+  const responseData = await response.json()
 
   if (!response.ok) {
-    const responseData = await response.json()
     const errorId = responseData.error.message
     if (errorId === 'EMAIL_NOT_FOUND' || errorId == 'INVALID_PASSWORD') {
       throw new Error('Invalid credentials')
@@ -50,5 +54,9 @@ export const login = (email, password) => async dispatch => {
     }
   }
 
-  dispatch({ type: LOGIN })
+  dispatch({
+    type: LOGIN,
+    token: responseData.idToken,
+    userId: responseData.tokenId
+  })
 }

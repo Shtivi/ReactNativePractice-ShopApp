@@ -1,5 +1,8 @@
+import { AsyncStorage } from "react-native"
+
 export const SIGNUP = 'SIGNUP'
 export const LOGIN = 'LOGIN'
+export const AUTHENTICATE = 'AUTHENTICATE'
 
 export const signup = (email, password) => async dispatch => {
   const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAvucPtChrmHxSFfua6aIq3vQeQb0YSsr8', {
@@ -24,11 +27,9 @@ export const signup = (email, password) => async dispatch => {
     }
   }
 
-  dispatch({
-    type: SIGNUP,
-    token: responseData.idToken,
-    userId: responseData.tokenId
-  })
+  const { idToken, localId, expiresIn } = responseData
+  await persistAuthData(idToken, localId, parseInt(expiresIn))
+  dispatch(authenticate(idToken, localId))
 }
 
 export const login = (email, password) => async dispatch => {
@@ -54,9 +55,21 @@ export const login = (email, password) => async dispatch => {
     }
   }
 
-  dispatch({
-    type: LOGIN,
-    token: responseData.idToken,
-    userId: responseData.tokenId
-  })
+  const { idToken, localId, expiresIn } = responseData
+  await persistAuthData(idToken, localId, parseInt(expiresIn))
+  dispatch(authenticate(idToken, localId))
+}
+
+export const authenticate = (userId, token) => ({
+  type: AUTHENTICATE,
+  userId,
+  token
+})
+
+const persistAuthData = (token, userId, expiresIn) => {
+  AsyncStorage.setItem('userData', JSON.stringify({
+    token,
+    userId,
+    expiryDate: new Date(new Date().getTime() + expiresIn * 1000).toISOString()
+  }))
 }

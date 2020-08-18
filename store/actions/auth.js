@@ -1,8 +1,7 @@
 import { AsyncStorage } from "react-native"
 
-export const SIGNUP = 'SIGNUP'
-export const LOGIN = 'LOGIN'
 export const AUTHENTICATE = 'AUTHENTICATE'
+export const LOGOUT = 'LOGOUT'
 
 export const signup = (email, password) => async dispatch => {
   const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAvucPtChrmHxSFfua6aIq3vQeQb0YSsr8', {
@@ -65,6 +64,11 @@ export const authenticate = (userId, token) => ({
   userId,
   token
 })
+
+export const logout = () => async dispatch => {
+  await AsyncStorage.removeItem('userData')
+  dispatch({ type: LOGOUT })
+}
 
 const persistAuthData = (token, userId, expiresIn) => {
   AsyncStorage.setItem('userData', JSON.stringify({

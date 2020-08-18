@@ -1,21 +1,21 @@
-import React from 'react';
-import { createDrawerNavigator } from 'react-navigation-drawer'
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
-import { createStackNavigator } from 'react-navigation-stack'
-import { createBottomTabNavigator } from 'react-navigation-tabs'
-import { createSwitchNavigator, createAppContainer } from 'react-navigation'
-import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
-import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
+import React from 'react';
+import { Platform, SafeAreaView, View, Button } from 'react-native';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createDrawerNavigator, DrawerNavigatorItems } from 'react-navigation-drawer';
+import { createStackNavigator } from 'react-navigation-stack';
+import Colors from '../constants/Colors';
 import CartScreen from '../screens/shop/CartScreen';
 import OrdersScreen from '../screens/shop/OrdersScreen';
-import UserProductsScreen from '../screens/user/UserProductsScreen';
-import EditProductScreen from '../screens/user/EditProductScreen';
-import AuthScreen from '../screens/user/AuthScreen';
-import Colors from '../constants/Colors';
+import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
+import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
 import StartupScreen from '../screens/StartupScreen';
+import AuthScreen from '../screens/user/AuthScreen';
+import EditProductScreen from '../screens/user/EditProductScreen';
+import UserProductsScreen from '../screens/user/UserProductsScreen';
+import { useDispatch } from 'react-redux';
+import { logout } from '../store/actions/auth';
+
 
 const defaultNavOptions = {
   headerStyle: {
@@ -96,6 +96,26 @@ const ShopNavigator = createDrawerNavigator(
   {
     contentOptions: {
       activeTintColor: Colors.primary
+    },
+    contentComponent: props => {
+      const dispatch = useDispatch()
+      return (
+        <View style={{ flex: 1, }}>
+          <SafeAreaView
+            forceInset={{ top: 'always', horizontal: 'never' }} 
+            style={{ flex: 1, justifyContent: 'space-between' }}>
+            <View>
+              <DrawerNavigatorItems {...props} />
+            </View>
+            <View>
+              <Button title="Logout" color={Colors.primary} onPress={() => {
+                dispatch(logout())
+                props.navigation.navigate('Auth')
+              }} />
+            </View>
+          </SafeAreaView>
+        </View>
+      )
     }
   }
 );

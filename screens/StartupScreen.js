@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react'
 import { StyleSheet, View, ActivityIndicator, AsyncStorage } from 'react-native'
 import Colors from '../constants/Colors'
 import { useDispatch } from 'react-redux'
-import { authenticate } from '../store/actions/auth'
+import { authenticate, autoLoginAttempt } from '../store/actions/auth'
 
 export default props => {
   const dispatch = useDispatch()
@@ -10,20 +10,21 @@ export default props => {
   const tryLogin = useCallback(async () => {
     const userData = await AsyncStorage.getItem('userData')
     if (!userData) {
-      props.navigation.navigate('Auth')
+      // props.navigation.navigate('Auth')
+      dispatch(autoLoginAttempt())
       return;
     }
-
+    
     const transformedData = JSON.parse(userData)
     const { token, userId, expiryDate } = transformedData
     const expirationDate = new Date(expiryDate)
-
+    
     if (expirationDate <= new Date() || !token || !userId) {
-      props.navigation.navigate('Auth')
+      dispatch(autoLoginAttempt())
       return
     }
 
-    props.navigation.navigate('Shop')
+    // props.navigation.navigate('Shop')
     dispatch(authenticate(userId, token))
   }, [dispatch])
 

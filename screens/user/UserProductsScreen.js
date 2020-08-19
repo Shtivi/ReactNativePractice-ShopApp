@@ -13,7 +13,7 @@ const UserProductsScreen = props => {
   const dispatch = useDispatch();
 
   const editProductHandler = id => {
-    props.navigation.navigate('EditProduct', { productId: id });
+    // props.navigation.navigate('EditProduct', { productId: id });
   };
 
   const deleteHandler = (id) => {
@@ -60,7 +60,7 @@ const UserProductsScreen = props => {
   );
 };
 
-UserProductsScreen.navigationOptions = navData => {
+export const screenOptions = navData => {
   return {
     headerTitle: 'Your Products',
     headerLeft: () => (

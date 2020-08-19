@@ -2,6 +2,7 @@ import { AsyncStorage } from "react-native"
 
 export const AUTHENTICATE = 'AUTHENTICATE'
 export const LOGOUT = 'LOGOUT'
+export const AUTO_LOGIN_ATTEMPT = 'AUTO_LOGIN_ATTEMPT'
 
 export const signup = (email, password) => async dispatch => {
   const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAvucPtChrmHxSFfua6aIq3vQeQb0YSsr8', {
@@ -69,6 +70,10 @@ export const logout = () => async dispatch => {
   await AsyncStorage.removeItem('userData')
   dispatch({ type: LOGOUT })
 }
+
+export const autoLoginAttempt = () => ({
+  type: AUTO_LOGIN_ATTEMPT
+})
 
 const persistAuthData = (token, userId, expiresIn) => {
   AsyncStorage.setItem('userData', JSON.stringify({

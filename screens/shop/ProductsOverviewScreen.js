@@ -38,8 +38,8 @@ const ProductsOverviewScreen = props => {
   };
 
   useEffect(() => {
-    const subscription = props.navigation.addListener('willFocus', loadProducts)
-    return () => subscription.remove()
+    const unsubscribe = props.navigation.addListener('focus', loadProducts)
+    return unsubscribe
   }, [loadProducts])
 
   useEffect(() => {
@@ -117,7 +117,15 @@ const ProductsOverviewScreen = props => {
   );
 };
 
-ProductsOverviewScreen.navigationOptions = navData => {
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+})
+
+export const screenOptions = navData => {
   return {
     headerTitle: 'All Products',
     headerLeft: () => (
@@ -144,13 +152,5 @@ ProductsOverviewScreen.navigationOptions = navData => {
     )
   };
 };
-
-const styles = StyleSheet.create({
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-})
 
 export default ProductsOverviewScreen;

@@ -1,4 +1,6 @@
-import Product from "../../models/product";
+import Product from "../../models/product"
+import * as Permissions from 'expo-permissions'
+import * as Notifications from 'expo-notifications'
 
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
 export const CREATE_PRODUCT = 'CREATE_PRODUCT';
@@ -18,7 +20,8 @@ export const fetchProducts = () => async dispatch => {
     data[productId].title,
     data[productId].imageUrl,
     data[productId].description,
-    data[productId].price
+    data[productId].price,
+    data[productId].ownerPushToken
   ))
 
   dispatch({
@@ -41,6 +44,14 @@ export const deleteProduct = productId => async (dispatch, getState) => {
 
 export const createProduct = (title, description, imageUrl, price) => {
   return async (dispatch, getState) => {
+
+    let pushToken = null
+    const statusObj = await Permissions.askAsync(Permissions.NOTIFICATIONS)
+    if (statusObj.status === 'granted')
+    {
+      pushToken = (await Notifications.getExpoPushTokenAsync()).data
+    }
+
     const token = getState().auth.token
     const response = await fetch('https://react-native-practice-ac60f.firebaseio.com/products.json?auth=' + token, {
       method: 'POST',
@@ -51,7 +62,8 @@ export const createProduct = (title, description, imageUrl, price) => {
         title,
         description,
         imageUrl,
-        price
+        price,
+        ownerPushToken: pushToken
       })
     })
 
@@ -64,7 +76,8 @@ export const createProduct = (title, description, imageUrl, price) => {
         title,
         description,
         imageUrl,
-        price
+        price,
+        pushToken
       }
     })
   };
